@@ -33,6 +33,9 @@ class SubsetCoverParameters:
 class SubsetCoverSolution:
     '''Whether the solve succeeded or not.'''
     status: SolveStatus
+    solve_time_seconds: int
+    # I could add the actual solution here, but not really
+    # necessary for timing.
 
 
 class SubsetCover(ABC):
