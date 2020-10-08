@@ -154,8 +154,10 @@ class SubsetCoverZ3(SubsetCover):
                 ]))
             realized_choice_sets.append(choice_set_members)
 
+        '''
         print(
             f"Chose {len(realized_choice_sets)} sets: {realized_choice_sets}")
+        '''
         return SubsetCoverSolution(status=SolveStatus.SOLVED,
                                    solve_time_seconds=end - start)
 

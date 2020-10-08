@@ -143,13 +143,6 @@ class SubsetCoverILP(SubsetCover):
         time_limit_seconds = 120
         solver.SetTimeLimit(time_limit_seconds * 1000)
         '''
-        '''
-        print(
-            f"Starting solve, checking if {num_choice_sets} choice sets is enough."
-        )
-        print(f"Model has {solver.NumVariables()} variables "
-              f"and {solver.NumConstraints()} constraints.")
-        '''
 
         start = time()
         status = solver.Solve()
