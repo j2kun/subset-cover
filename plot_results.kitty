@@ -1,0 +1,2 @@
+{ echo "Z3 ILP Z3BF" ; jq -r '[.["sat search from below"]["SubsetCoverZ3"], .["sat search from below"]["SubsetCoverILP"], .["sat search from below"]["SubsetCoverZ3BruteForce"]] | transpose | map(join(" ")) | join("\n")' experiment_results.json } | plot.awk | rsvg-convert | icat
+

@@ -17,7 +17,7 @@ experiments.append(
         family='small sat',
         order=0,
         parameters=SubsetCoverParameters(
-            num_elements=7,
+            num_elements=6,
             choice_set_size=3,
             hit_set_size=2,
             num_choice_sets=7,
@@ -30,10 +30,10 @@ experiments.append(
         family='small unsat',
         order=0,
         parameters=SubsetCoverParameters(
-            num_elements=7,
+            num_elements=6,
             choice_set_size=3,
             hit_set_size=2,
-            num_choice_sets=6,
+            num_choice_sets=3,
         ),
     ))
 
@@ -43,7 +43,7 @@ experiments.append(
         family='large sat',
         order=0,
         parameters=SubsetCoverParameters(
-            num_elements=10,
+            num_elements=9,
             choice_set_size=5,
             hit_set_size=3,
             num_choice_sets=50,
@@ -56,7 +56,7 @@ experiments.append(
         family='large unsat',
         order=0,
         parameters=SubsetCoverParameters(
-            num_elements=10,
+            num_elements=9,
             choice_set_size=5,
             hit_set_size=3,
             num_choice_sets=3,
@@ -69,25 +69,11 @@ experiments.extend([
         family='sat search from below',
         order=i,
         parameters=SubsetCoverParameters(
-            num_elements=8,
+            num_elements=6,
             choice_set_size=4,
             hit_set_size=3,
             num_choice_sets=i,
         ),
     )
     for i in range(1, 20)
-])
-
-experiments.extend([
-    Experiment(
-        family='unsat search from above',
-        order=i,
-        parameters=SubsetCoverParameters(
-            num_elements=8,
-            choice_set_size=4,
-            hit_set_size=3,
-            num_choice_sets=25-i,
-        ),
-    )
-    for i in range(15)
 ])
