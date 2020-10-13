@@ -139,10 +139,8 @@ class SubsetCoverILP(SubsetCover):
 
         # The objective does not matter because we are looking for a feasible solution
         solver.Maximize(1)
-        '''
-        time_limit_seconds = 120
+        time_limit_seconds = 60 * 5
         solver.SetTimeLimit(time_limit_seconds * 1000)
-        '''
 
         start = time()
         status = solver.Solve()

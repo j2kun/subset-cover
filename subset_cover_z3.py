@@ -110,6 +110,7 @@ class SubsetCoverZ3(SubsetCover):
             implications.append(Implies(hit_set.variable == 1, Or(*clauses)))
 
         solver = Solver()
+        solver.set("timeout", 60*5)
         for size_constraint in choice_set_size_constraints:
             solver.add(size_constraint)
 

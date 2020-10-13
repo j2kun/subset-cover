@@ -110,6 +110,7 @@ class SubsetCoverZ3BruteForce(SubsetCover):
             choice_counters.append(count_var)
 
         solver = Solver()
+        solver.set("timeout", 60*5)
         for hit_set in hit_sets.values():
             solver.add(hit_set.variable)  # all must be hit
 
