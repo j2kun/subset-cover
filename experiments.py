@@ -69,9 +69,9 @@ experiments.extend([
         family='sat search from below',
         order=i,
         parameters=SubsetCoverParameters(
-            num_elements=6,
-            choice_set_size=4,
-            hit_set_size=3,
+            num_elements=7,
+            choice_set_size=3,
+            hit_set_size=2,
             num_choice_sets=i,
         ),
     )
