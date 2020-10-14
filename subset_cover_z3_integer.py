@@ -31,7 +31,7 @@ class HitSet:
     variable: Any
 
 
-class SubsetCoverZ3(SubsetCover):
+class SubsetCoverZ3Integer(SubsetCover):
     '''
     An implementation of the subset cover problem that uses Z3,
     and encodes the problem in such a way that does not require
@@ -164,10 +164,10 @@ class SubsetCoverZ3(SubsetCover):
 
 
 if __name__ == "__main__":
-    result = SubsetCoverZ3().solve(
+    result = SubsetCoverZ3Integer().solve(
         SubsetCoverParameters(num_elements=7,
-                              hit_set_size=3,
-                              choice_set_size=2,
+                              choice_set_size=3,
+                              hit_set_size=2,
                               num_choice_sets=4))
 
     print(result)

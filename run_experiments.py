@@ -1,14 +1,14 @@
 from collections import defaultdict
 from experiments import experiments
 from subset_cover_ilp import SubsetCoverILP
-from subset_cover_z3 import SubsetCoverZ3
 from subset_cover_z3_brute_force import SubsetCoverZ3BruteForce
 from subset_cover_z3_cardinality import SubsetCoverZ3Cardinality
+from subset_cover_z3_integer import SubsetCoverZ3Integer
 import json
 
 methods = [
     SubsetCoverILP,
-    SubsetCoverZ3,
+    SubsetCoverZ3Integer,
     SubsetCoverZ3BruteForce,
     SubsetCoverZ3Cardinality,
 ]
