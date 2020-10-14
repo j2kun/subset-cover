@@ -56,9 +56,9 @@ class SubsetCoverZ3BruteForce(SubsetCover):
         For a choice set like (1,2,3), we construct the implication,
         for each subset of size hit_set_size (e.g. = 2),
 
-            ChoiceSet_(1,2,3) => Hit_(1,2)
-            ChoiceSet_(1,2,3) => Hit_(2,3)
-            ChoiceSet_(1,2,3) => Hit_(1,3)
+            Choice_(1,2,3) => Hit_(1,2)
+            Choice_(1,2,3) => Hit_(2,3)
+            Choice_(1,2,3) => Hit_(1,3)
 
         '''
         # also builds up this index
@@ -73,8 +73,8 @@ class SubsetCoverZ3BruteForce(SubsetCover):
         For a hit set like (1,2), we construct the implication:
 
             Hit_(1,2) =>
-              ChoiceSet(1,2,3) OR
-              ChoiceSet(1,2,4) OR
+              Choice(1,2,3) OR
+              Choice(1,2,4) OR
               ...
         '''
         for hit_set in hit_sets.values():
@@ -87,8 +87,8 @@ class SubsetCoverZ3BruteForce(SubsetCover):
 
         args = [cs.variable
                 for cs in choice_sets] + [parameters.num_choice_sets]
-        choice_sets_at_most = AtMost(args)
-        choice_sets_at_least = AtLeast(args)
+        choice_sets_at_most = AtMost(*args)
+        choice_sets_at_least = AtLeast(*args)
 
         solver = Solver()
         solver.set("timeout", 60 * 5)
