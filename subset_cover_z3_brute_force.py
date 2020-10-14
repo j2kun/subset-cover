@@ -1,4 +1,5 @@
 from collections import defaultdict
+from common_model import HitSet
 from dataclasses import dataclass
 from itertools import combinations
 from itertools import product
@@ -9,26 +10,20 @@ from subset_cover import SubsetCoverSolution
 from time import time
 from typing import Any
 from typing import List
-from z3 import *
+from z3 import And
+from z3 import AtLeast
+from z3 import AtMost
+from z3 import Bool
+from z3 import Implies
+from z3 import Or
+from z3 import Solver
+from z3 import sat
+from z3 import unknown
+from z3 import unsat
 
 
 @dataclass(frozen=True)
 class ChoiceSet:
-    '''The set you're allowed to choose.
-
-    I.e., the rings you put on your fingers.
-    '''
-    set_size: int
-    elements: List[int]
-    variable: Any
-
-
-@dataclass(frozen=True)
-class HitSet:
-    '''The sets you're trying to hit by picking choice sets.
-
-    I.e., the subsets of rings that interact with magical effects.
-    '''
     set_size: int
     elements: List[int]
     variable: Any
@@ -136,9 +131,15 @@ class SubsetCoverZ3BruteForce(SubsetCover):
 
 if __name__ == "__main__":
     result = SubsetCoverZ3BruteForce().solve(
-        SubsetCoverParameters(num_elements=20,
+        SubsetCoverParameters(num_elements=7,
                               choice_set_size=3,
                               hit_set_size=2,
-                              num_choice_sets=50))
+                              num_choice_sets=4))
+    print(result)
 
+    result = SubsetCoverZ3BruteForce().solve(
+        SubsetCoverParameters(num_elements=7,
+                              choice_set_size=3,
+                              hit_set_size=2,
+                              num_choice_sets=8))
     print(result)
