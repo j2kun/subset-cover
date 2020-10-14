@@ -1,3 +1,4 @@
+'''A set of helper types and classes common to all subset cover models.'''
 from collections import defaultdict
 from dataclasses import dataclass
 from itertools import combinations
@@ -5,6 +6,10 @@ from itertools import product
 from typing import Any
 from typing import List
 from typing import Tuple
+from typing import Callable
+
+# To allow z3 and ILP models to share these helpers
+VariableConstructor = Callable[[str], Any]
 
 
 @dataclass(frozen=True)
@@ -25,12 +30,12 @@ class IsHit:
 
 class ChoiceSetMembers:
     '''A class that constructs ChoiceSetMember instances and the associated lookups.'''
-    def __init__(self, solver, elements, choice_set_indices):
+    def __init__(self, elements, choice_set_indices,
+                 variable_constructor: VariableConstructor):
         self.memberships = [
             ChoiceSetMember(element=element,
                             choice_set_index=choice_set_index,
-                            variable=solver.IntVar(
-                                0, 1,
+                            variable=variable_constructor(
                                 f"Member_({choice_set_index},{element})"))
             for (element,
                  choice_set_index) in product(elements, choice_set_indices)
@@ -62,13 +67,14 @@ class IsHits:
     '''A class that defines IsHit variables for each
     hit set and choice set pair.
     '''
-    def __init__(self, solver, hit_sets, choice_set_indices):
+    def __init__(self, hit_sets, choice_set_indices,
+                 variable_constructor: VariableConstructor):
         self.is_hit_variables = [
             IsHit(hit_set=hit_set,
                   choice_set_index=choice_set_index,
-                  variable=solver.IntVar(
-                      0, 1, f"IsHit_({hit_set},{choice_set_index})")) for
-            hit_set, choice_set_index in product(hit_sets, choice_set_indices)
+                  variable=variable_constructor(
+                      f"IsHit_({hit_set},{choice_set_index})")) for hit_set,
+            choice_set_index in product(hit_sets, choice_set_indices)
         ]
 
         self.lookup = {(x.hit_set, x.choice_set_index): x
@@ -83,5 +89,3 @@ class IsHits:
 
     def for_hit_set(self, hit_set):
         return self.by_hit_set[hit_set]
-
-

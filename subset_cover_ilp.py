@@ -1,8 +1,8 @@
-from ilp_model import ChoiceSetMember
-from ilp_model import ChoiceSetMembers
-from ilp_model import IsHit
-from ilp_model import IsHits
-from ilp_model import make_hit_sets
+from common_model import ChoiceSetMember
+from common_model import ChoiceSetMembers
+from common_model import IsHit
+from common_model import IsHits
+from common_model import make_hit_sets
 from subset_cover import SolveStatus
 from subset_cover import SubsetCover
 from subset_cover import SubsetCoverParameters
@@ -20,13 +20,16 @@ class SubsetCoverILP(SubsetCover):
     def solve(self, parameters: SubsetCoverParameters) -> SubsetCoverSolution:
         solver = pywraplp.Solver.CreateSolver('subset_cover', 'SCIP')
 
+        def make_binary_var(name: str):
+            return solver.IntVar(0, 1, name)
+
         elements = list(range(parameters.num_elements))
         choice_set_indices = list(range(parameters.num_choice_sets))
         hit_sets = make_hit_sets(elements, parameters.hit_set_size)
 
-        choice_set_members = ChoiceSetMembers(solver, elements,
-                                              choice_set_indices)
-        is_hits = IsHits(solver, hit_sets, choice_set_indices)
+        choice_set_members = ChoiceSetMembers(elements, choice_set_indices,
+                                              make_binary_var)
+        is_hits = IsHits(hit_sets, choice_set_indices, make_binary_var)
 
         # Each choice set must have size choice_set_size.
         for choice_set_index in choice_set_indices:
