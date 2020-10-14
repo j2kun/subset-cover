@@ -66,10 +66,25 @@ experiments.append(
 
 experiments.extend([
     Experiment(
-        family='sat search from below',
+        family='sat search n=7',
         order=i,
         parameters=SubsetCoverParameters(
             num_elements=7,
+            choice_set_size=3,
+            hit_set_size=2,
+            num_choice_sets=i,
+        ),
+    )
+    for i in range(1, 20)
+])
+
+
+experiments.extend([
+    Experiment(
+        family='search n=8',
+        order=i,
+        parameters=SubsetCoverParameters(
+            num_elements=8,
             choice_set_size=3,
             hit_set_size=2,
             num_choice_sets=i,

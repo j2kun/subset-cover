@@ -44,28 +44,19 @@ class SubsetCoverZ3BruteForce(SubsetCover):
         hit_set_size = parameters.hit_set_size
         elements = list(range(parameters.num_elements))
         choice_sets = [
-            ChoiceSet(
-                set_size=choice_set_size,
-                elements=elts,
-                variable=Bool(f"Choice_{elts}")
-            )
+            ChoiceSet(set_size=choice_set_size,
+                      elements=elts,
+                      variable=Bool(f"Choice_{elts}"))
             for elts in combinations(elements, choice_set_size)
         ]
 
-        hit_sets = dict(
-            (
-                tuple(sorted(elts)),
-                HitSet(
-                    set_size=hit_set_size,
-                    elements=elts,
-                    variable=Bool(f"Hit_{elts}")
-                )
-            )
-            for elts in combinations(elements, hit_set_size)
-        )
+        hit_sets = dict((tuple(sorted(elts)),
+                         HitSet(set_size=hit_set_size,
+                                elements=elts,
+                                variable=Bool(f"Hit_{elts}")))
+                        for elts in combinations(elements, hit_set_size))
 
         implications = []
-
         '''
         For a choice set like (1,2,3), we construct the implication,
         for each subset of size hit_set_size (e.g. = 2),
@@ -83,7 +74,6 @@ class SubsetCoverZ3BruteForce(SubsetCover):
                 hit_set_to_choice_set_lookup[hit_set].add(choice_set)
                 implications.append(
                     Implies(choice_set.variable, hit_set.variable))
-
         '''
         For a hit set like (1,2), we construct the implication:
 
@@ -98,26 +88,25 @@ class SubsetCoverZ3BruteForce(SubsetCover):
                 for choice_set in hit_set_to_choice_set_lookup[hit_set]
             ]
             implications.append(
-                Implies(
-                    hit_set.variable,
-                    Or(*relevant_choice_set_vars)))
+                Implies(hit_set.variable, Or(*relevant_choice_set_vars)))
 
-        # needed for minimization of number of chosen sets
-        choice_counters = []
-        for i, choice_set in enumerate(choice_sets):
-            count_var = Int('count_' + str(i))
-            implications.append(choice_set.variable == count_var)
-            choice_counters.append(count_var)
+        args = [cs.variable
+                for cs in choice_sets] + [parameters.num_choice_sets]
+        choice_sets_at_most = AtMost(args)
+        choice_sets_at_least = AtLeast(args)
 
         solver = Solver()
-        solver.set("timeout", 60*5)
+        solver.set("timeout", 60 * 5)
         for hit_set in hit_sets.values():
             solver.add(hit_set.variable)  # all must be hit
 
         for impl in implications:
             solver.add(impl)
 
-        solver.add(sum(choice_counters) == parameters.num_choice_sets)
+        solver.add(choice_sets_at_most)
+        solver.add(choice_sets_at_least)
+
+        # print(solver.to_smt2())
 
         start = time()
         result = solver.check()
@@ -133,24 +122,23 @@ class SubsetCoverZ3BruteForce(SubsetCover):
 
         model = solver.model()
         chosen_sets = [
-            c.elements for c in choice_sets
-            if model.evaluate(c.variable)
+            c.elements for c in choice_sets if model.evaluate(c.variable)
         ]
         actual_hit_sets = [
-            h.elements for h in hit_sets.values()
-            if model.evaluate(h.variable)
+            h.elements for h in hit_sets.values() if model.evaluate(h.variable)
         ]
         n = len(elements)
-        max_hits = int(n * (n-1) / 2)
+        max_hits = int(n * (n - 1) / 2)
 
         return SubsetCoverSolution(status=SolveStatus.SOLVED,
                                    solve_time_seconds=end - start)
 
+
 if __name__ == "__main__":
     result = SubsetCoverZ3BruteForce().solve(
-        SubsetCoverParameters(num_elements=7,
-                              hit_set_size=3,
-                              choice_set_size=2,
-                              num_choice_sets=4))
+        SubsetCoverParameters(num_elements=20,
+                              choice_set_size=3,
+                              hit_set_size=2,
+                              num_choice_sets=50))
 
     print(result)
