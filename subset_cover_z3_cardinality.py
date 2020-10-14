@@ -44,24 +44,11 @@ class SubsetCoverZ3Cardinality(SubsetCover):
         choice_sets = list(range(parameters.num_choice_sets))
         hit_set_size = parameters.hit_set_size
 
-        memberships = [
-            ChoiceSetMember(
-                element=element,
-                choice_set=choice_set_index,
-                variable=Bool(f"Member_({choice_set_index},{element})"))
-            for element, choice_set_index in product(elements, choice_sets)
-        ]
-
-        memberships_lookup = dict(
-            ((mem.choice_set, mem.element), mem) for mem in memberships)
-
-        memberships_by_choice_set = defaultdict(set)
-        for membership in memberships:
-            memberships_by_choice_set[membership.choice_set].add(membership)
+        choice_set_members = ChoiceSetMembers(elements, choice_sets)
 
         # each choice set must have a specific size
         choice_set_size_constraints = []
-        for memberships in memberships_by_choice_set.values():
+        for memberships in choice_set_members.grouped_by_choice_set():
             args = [mem.variable for mem in memberships] + [parameters.choice_set_size]
             choice_set_size_constraints.append(AtMost(args))
             choice_set_size_constraints.append(AtLeast(args))
@@ -80,8 +67,8 @@ class SubsetCoverZ3Cardinality(SubsetCover):
             Member_(i,1) and Member_(i,2) => Hit_(1,2)
 
         '''
-        for choice_set in choice_sets:
-            mems = memberships_by_choice_set[choice_set]
+        for choice_set_index in choice_sets:
+            mems = choice_set_members.for_choice_set_index(choice_set_index)
             for membership_subset in combinations(mems, hit_set_size):
                 hit_set = hit_sets[tuple(
                     sorted([mem.element for mem in membership_subset]))]
@@ -100,9 +87,9 @@ class SubsetCoverZ3Cardinality(SubsetCover):
         for hit_set in hit_sets.values():
             clauses = []
 
-            for choice_set in choice_sets:
+            for choice_set_index in choice_sets:
                 mems = [
-                    memberships_lookup[(choice_set, elt)]
+                    choice_set_members.for_choice_set_index_and_element(choice_set, elt)
                     for elt in hit_set.elements
                 ]
                 clauses.append(And(*[mem.variable for mem in mems]))
