@@ -124,22 +124,22 @@ class SubsetCoverZ3BruteForce(SubsetCover):
         ]
         n = len(elements)
         max_hits = int(n * (n - 1) / 2)
+        print(chosen_sets)
 
         return SubsetCoverSolution(status=SolveStatus.SOLVED,
                                    solve_time_seconds=end - start)
 
 
 if __name__ == "__main__":
-    result = SubsetCoverZ3BruteForce().solve(
-        SubsetCoverParameters(num_elements=7,
-                              choice_set_size=3,
-                              hit_set_size=2,
-                              num_choice_sets=4))
-    print(result)
+    from math import comb
 
-    result = SubsetCoverZ3BruteForce().solve(
-        SubsetCoverParameters(num_elements=7,
-                              choice_set_size=3,
-                              hit_set_size=2,
-                              num_choice_sets=8))
-    print(result)
+    for n in range(8, 16):
+        k = int(n / 2)
+        l = 3
+        max_num_sets = int(2 * comb(n, l) / comb(k, l))
+        params = SubsetCoverParameters(num_elements=n,
+                                       choice_set_size=k,
+                                       hit_set_size=l,
+                                       num_choice_sets=max_num_sets)
+        print(params)
+        print(SubsetCoverZ3BruteForce().solve(params))
