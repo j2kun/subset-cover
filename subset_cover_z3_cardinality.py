@@ -1,4 +1,7 @@
 from collections import defaultdict
+from common_model import ChoiceSetMember
+from common_model import ChoiceSetMembers
+from common_model import HitSet
 from dataclasses import dataclass
 from itertools import combinations
 from itertools import product
@@ -9,26 +12,16 @@ from subset_cover import SubsetCoverSolution
 from time import time
 from typing import Any
 from typing import List
-from z3 import *
-
-
-@dataclass(frozen=True)
-class ChoiceSetMember:
-    '''Whether an element is chosen to be in a choice set.'''
-    element: int
-    choice_set: int
-    variable: Any
-
-
-@dataclass(frozen=True)
-class HitSet:
-    '''The sets you're trying to hit by picking choice sets.
-
-    I.e., the subsets of rings that interact with magical effects.
-    '''
-    set_size: int
-    elements: List[int]
-    variable: Any
+from z3 import And
+from z3 import Implies
+from z3 import AtLeast
+from z3 import AtMost
+from z3 import Bool
+from z3 import Or
+from z3 import Solver
+from z3 import sat
+from z3 import unknown
+from z3 import unsat
 
 
 class SubsetCoverZ3Cardinality(SubsetCover):
@@ -44,7 +37,7 @@ class SubsetCoverZ3Cardinality(SubsetCover):
         choice_sets = list(range(parameters.num_choice_sets))
         hit_set_size = parameters.hit_set_size
 
-        choice_set_members = ChoiceSetMembers(elements, choice_sets)
+        choice_set_members = ChoiceSetMembers(elements, choice_sets, Bool)
 
         # each choice set must have a specific size
         choice_set_size_constraints = []
@@ -89,7 +82,7 @@ class SubsetCoverZ3Cardinality(SubsetCover):
 
             for choice_set_index in choice_sets:
                 mems = [
-                    choice_set_members.for_choice_set_index_and_element(choice_set, elt)
+                    choice_set_members.for_choice_set_index_and_element(choice_set_index, elt)
                     for elt in hit_set.elements
                 ]
                 clauses.append(And(*[mem.variable for mem in mems]))
@@ -107,15 +100,7 @@ class SubsetCoverZ3Cardinality(SubsetCover):
 
         for impl in implications:
             solver.add(impl)
-        '''
-        with open(f'subset_cover_10_5_2_{num_choice_sets}.smt2', 'w') as outfile:
-            outfile.write(solver.to_smt2())
 
-        print(f"Solver has {len(solver.assertions())} assertions.")
-        print(
-            f"Starting solve, checking if {num_choice_sets} choice sets is enough."
-        )
-        '''
         start = time()
         result = solver.check()
         end = time()

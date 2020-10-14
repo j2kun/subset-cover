@@ -28,6 +28,15 @@ class IsHit:
     variable: Any
 
 
+@dataclass(frozen=True)
+class HitSet:
+    '''The sets you're trying to hit by picking choice sets.'''
+    set_size: int
+    elements: List[int]
+    variable: Any
+
+
+
 class ChoiceSetMembers:
     '''A class that constructs ChoiceSetMember instances and the associated lookups.'''
     def __init__(self, elements, choice_set_indices,
@@ -55,6 +64,12 @@ class ChoiceSetMembers:
 
     def for_choice_set_index(self, choice_set_index):
         return self.memberships_by_choice_set[choice_set_index]
+
+    def grouped_by_choice_set(self):
+        return self.memberships_by_choice_set.values()
+
+    def all_variables(self):
+        return [mem.variable for mem in self.memberships]
 
 
 def make_hit_sets(elements, hit_set_size):
