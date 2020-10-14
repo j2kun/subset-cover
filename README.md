@@ -1,5 +1,1 @@
-# TODO
-
-2. Add timing rig.
-3. Add variants for searching up and searching down.
-4. Blog post?
+# Modeling a subset cover problem with Z3
