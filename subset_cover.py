@@ -25,7 +25,7 @@ class SubsetCoverParameters:
     '''The size of the sets used to cover hit sets.'''
     choice_set_size: int
 
-    '''The number of allowed choice sets.'''
+    '''If set, the number of allowed choice sets.'''
     num_choice_sets: int
 
 
