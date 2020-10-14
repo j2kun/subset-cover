@@ -115,13 +115,14 @@ class SubsetCoverZ3Cardinality(SubsetCover):
         model = solver.model()
 
         realized_choice_sets = []
-        for choice_set, mems in memberships_by_choice_set.items():
-            choice_set_members = list(
+        for choice_set_index in choice_sets:
+            mems = choice_set_members.for_choice_set_index(choice_set_index)
+            choice_set = list(
                 sorted([
                     mem.element for mem in mems
                     if model.evaluate(mem.variable)
                 ]))
-            realized_choice_sets.append(choice_set_members)
+            realized_choice_sets.append(choice_set)
 
         '''
         print(
