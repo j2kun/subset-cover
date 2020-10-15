@@ -62,7 +62,7 @@ class SubsetCoverILP(SubsetCover):
 
         # The objective does not matter because we are looking for a feasible solution
         solver.Maximize(1)
-        time_limit_seconds = 60 * 5
+        time_limit_seconds = 60 * 15
         solver.SetTimeLimit(time_limit_seconds * 1000)
 
         start = time()
@@ -93,10 +93,15 @@ class SubsetCoverILP(SubsetCover):
 
 
 if __name__ == "__main__":
-    result = SubsetCoverILP().solve(
-        SubsetCoverParameters(num_elements=7,
-                              choice_set_size=3,
-                              hit_set_size=2,
-                              num_choice_sets=4))
+    from math import comb
 
-    print(result)
+    for n in range(8, 16):
+        k = int(n / 2)
+        l = 3
+        max_num_sets = int(2 * comb(n, l) / comb(k, l))
+        params = SubsetCoverParameters(num_elements=n,
+                                       choice_set_size=k,
+                                       hit_set_size=l,
+                                       num_choice_sets=max_num_sets)
+        print(params)
+        print(SubsetCoverILP().solve(params))
