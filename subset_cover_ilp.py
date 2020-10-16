@@ -7,6 +7,7 @@ from subset_cover import SolveStatus
 from subset_cover import SubsetCover
 from subset_cover import SubsetCoverParameters
 from subset_cover import SubsetCoverSolution
+from subset_cover import print_table
 from time import time
 
 from ortools.linear_solver import pywraplp
@@ -103,5 +104,4 @@ if __name__ == "__main__":
                                        choice_set_size=k,
                                        hit_set_size=l,
                                        num_choice_sets=max_num_sets)
-        print(params)
-        print(SubsetCoverILP().solve(params))
+        print_table(params, SubsetCoverILP().solve(params), header=(n == 8))

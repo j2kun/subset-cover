@@ -9,6 +9,7 @@ from subset_cover import SolveStatus
 from subset_cover import SubsetCover
 from subset_cover import SubsetCoverParameters
 from subset_cover import SubsetCoverSolution
+from subset_cover import print_table
 from time import time
 from typing import Any
 from typing import List
@@ -134,16 +135,12 @@ class SubsetCoverZ3Integer(SubsetCover):
 
 
 if __name__ == "__main__":
-    result = SubsetCoverZ3Integer().solve(
-        SubsetCoverParameters(num_elements=7,
-                              choice_set_size=3,
-                              hit_set_size=2,
-                              num_choice_sets=4))
-    print(result)
-
-    result = SubsetCoverZ3Integer().solve(
-        SubsetCoverParameters(num_elements=7,
-                              choice_set_size=3,
-                              hit_set_size=2,
-                              num_choice_sets=8))
-    print(result)
+    for n in range(8, 16):
+        k = int(n / 2)
+        l = 3
+        max_num_sets = int(2 * comb(n, l) / comb(k, l))
+        params = SubsetCoverParameters(num_elements=n,
+                                       choice_set_size=k,
+                                       hit_set_size=l,
+                                       num_choice_sets=max_num_sets)
+        print_table(params, SubsetCoverZ3Integer().solve(params), header=(n == 8))

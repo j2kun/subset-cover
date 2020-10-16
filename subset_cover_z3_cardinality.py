@@ -9,14 +9,15 @@ from subset_cover import SolveStatus
 from subset_cover import SubsetCover
 from subset_cover import SubsetCoverParameters
 from subset_cover import SubsetCoverSolution
+from subset_cover import print_table
 from time import time
 from typing import Any
 from typing import List
 from z3 import And
-from z3 import Implies
 from z3 import AtLeast
 from z3 import AtMost
 from z3 import Bool
+from z3 import Implies
 from z3 import Or
 from z3 import Solver
 from z3 import sat
@@ -90,7 +91,7 @@ class SubsetCoverZ3Cardinality(SubsetCover):
             implications.append(Implies(hit_set.variable, Or(*clauses)))
 
         solver = Solver()
-        solver.set("timeout", 60*5)
+        solver.set("timeout", 1000 * 60 * 15)
         solver.set("sat.cardinality.solver", True)
         for size_constraint in choice_set_size_constraints:
             solver.add(size_constraint)
@@ -133,10 +134,14 @@ class SubsetCoverZ3Cardinality(SubsetCover):
 
 
 if __name__ == "__main__":
-    result = SubsetCoverZ3Cardinality().solve(
-        SubsetCoverParameters(num_elements=7,
-                              hit_set_size=2,
-                              choice_set_size=3,
-                              num_choice_sets=6))
+    from math import comb
 
-    print(result)
+    for n in range(8, 16):
+        k = int(n / 2)
+        l = 3
+        max_num_sets = int(2 * comb(n, l) / comb(k, l))
+        params = SubsetCoverParameters(num_elements=n,
+                                       choice_set_size=k,
+                                       hit_set_size=l,
+                                       num_choice_sets=max_num_sets)
+        print_table(params, SubsetCoverZ3Cardinality().solve(params), header=(n == 8))

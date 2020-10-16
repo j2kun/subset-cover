@@ -38,6 +38,21 @@ class SubsetCoverSolution:
     # necessary for timing.
 
 
+def print_table(parameters, solution, header=False):
+    if header:
+        print("num_elements,choice_set_size,hit_set_size,"
+                "num_choice_sets,status,solve_time_seconds")
+
+    print(
+        f"{parameters.num_elements},"
+        f"{parameters.choice_set_size},"
+        f"{parameters.hit_set_size},"
+        f"{parameters.num_choice_sets},"
+        f"{solution.status},"
+        f"{solution.solve_time_seconds:.4f}"
+    )
+
+
 class SubsetCover(ABC):
     '''An interface for a subset cover implementation.'''
     @abstractmethod

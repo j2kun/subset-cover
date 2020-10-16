@@ -7,6 +7,7 @@ from subset_cover import SolveStatus
 from subset_cover import SubsetCover
 from subset_cover import SubsetCoverParameters
 from subset_cover import SubsetCoverSolution
+from subset_cover import print_table
 from time import time
 from typing import Any
 from typing import List
@@ -91,7 +92,7 @@ class SubsetCoverZ3BruteForce(SubsetCover):
         choice_sets_at_least = AtLeast(*args)
 
         solver = Solver()
-        solver.set("timeout", 60 * 5)
+        solver.set("timeout", 1000 * 60 * 15)
         for hit_set in hit_sets.values():
             solver.add(hit_set.variable)  # all must be hit
 
@@ -124,7 +125,7 @@ class SubsetCoverZ3BruteForce(SubsetCover):
         ]
         n = len(elements)
         max_hits = int(n * (n - 1) / 2)
-        print(chosen_sets)
+        # print(chosen_sets)
 
         return SubsetCoverSolution(status=SolveStatus.SOLVED,
                                    solve_time_seconds=end - start)
@@ -141,5 +142,4 @@ if __name__ == "__main__":
                                        choice_set_size=k,
                                        hit_set_size=l,
                                        num_choice_sets=max_num_sets)
-        print(params)
-        print(SubsetCoverZ3BruteForce().solve(params))
+        print_table(params, SubsetCoverZ3BruteForce().solve(params), header=(n == 8))
