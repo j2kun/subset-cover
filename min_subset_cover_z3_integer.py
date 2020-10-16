@@ -30,7 +30,9 @@ class MinSubsetCoverZ3Integer(SubsetCover):
     an enumeration of all possible choice sets.
     '''
     def solve(self, parameters: SubsetCoverParameters) -> SubsetCoverSolution:
-        num_choice_sets = comb(parameters.num_elements, parameters.hit_set_size)
+        num_choice_sets = int(
+            2 * comb(parameters.num_elements, parameters.hit_set_size) /
+            comb(parameters.choice_set_size, parameters.hit_set_size))
         elements = list(range(parameters.num_elements))
         choice_sets = list(range(num_choice_sets))
         hit_set_size = parameters.hit_set_size
@@ -38,11 +40,11 @@ class MinSubsetCoverZ3Integer(SubsetCover):
         choice_set_members = ChoiceSetMembers(elements, choice_sets, Int)
 
         '''
-        TODO: finish this part
+        TODO: finish this
 
-        need to figure out whether to use the same model as the ILP,
-        or if I can figure out a different way to model it in z3,
-        since z3 doesn't support minimizing a boolean cardinality expression...
+        Need to make this more like the ILP model with a binary
+        switch for whether the set is chosen,
+        then minimize the sum of switches.
         '''
         # each choice set must have a specific size
         choice_set_size_constraints = [
@@ -89,15 +91,15 @@ class MinSubsetCoverZ3Integer(SubsetCover):
 
             for choice_set in choice_sets:
                 mems = [
-                    choice_set_members.for_choice_set_index_and_element(choice_set, elt)
-                    for elt in hit_set.elements
+                    choice_set_members.for_choice_set_index_and_element(
+                        choice_set, elt) for elt in hit_set.elements
                 ]
                 clauses.append(And(*[mem.variable == 1 for mem in mems]))
 
             implications.append(Implies(hit_set.variable == 1, Or(*clauses)))
 
         solver = Solver()
-        solver.set("timeout", 60*5)
+        solver.set("timeout", 60 * 5 * 1000)
         for size_constraint in choice_set_size_constraints:
             solver.add(size_constraint)
 
@@ -134,25 +136,20 @@ class MinSubsetCoverZ3Integer(SubsetCover):
                 ]))
             realized_choice_sets.append(choice_set)
 
-        '''
         print(
             f"Chose {len(realized_choice_sets)} sets: {realized_choice_sets}")
-        '''
         return SubsetCoverSolution(status=SolveStatus.SOLVED,
                                    solve_time_seconds=end - start)
 
 
 if __name__ == "__main__":
-    result = MinSubsetCoverZ3Integer().solve(
-        SubsetCoverParameters(num_elements=7,
-                              choice_set_size=3,
-                              hit_set_size=2,
-
-    result = SubsetCoverZ3Integer().solve(
-        SubsetCoverParameters(num_elements=7,
-                              choice_set_size=3,
-                              hit_set_size=2,
-                              num_choice_sets=8))
-    print(result)
-                              num_choice_sets=None))
-    print(result)
+    n = 10
+    k = int(n / 2)
+    l = 3
+    max_num_sets = int(2 * comb(n, l) / comb(k, l))
+    params = SubsetCoverParameters(num_elements=n,
+                                   choice_set_size=k,
+                                   hit_set_size=l,
+                                   num_choice_sets=max_num_sets)
+    print(params)
+    print(MinSubsetCoverZ3Integer().solve(params))

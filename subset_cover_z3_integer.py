@@ -5,6 +5,7 @@ from common_model import HitSet
 from dataclasses import dataclass
 from itertools import combinations
 from itertools import product
+from math import comb
 from subset_cover import SolveStatus
 from subset_cover import SubsetCover
 from subset_cover import SubsetCoverParameters
@@ -81,15 +82,15 @@ class SubsetCoverZ3Integer(SubsetCover):
 
             for choice_set in choice_sets:
                 mems = [
-                    choice_set_members.for_choice_set_index_and_element(choice_set, elt)
-                    for elt in hit_set.elements
+                    choice_set_members.for_choice_set_index_and_element(
+                        choice_set, elt) for elt in hit_set.elements
                 ]
                 clauses.append(And(*[mem.variable == 1 for mem in mems]))
 
             implications.append(Implies(hit_set.variable == 1, Or(*clauses)))
 
         solver = Solver()
-        solver.set("timeout", 60*5)
+        solver.set("timeout", 60 * 15 * 1000)
         for size_constraint in choice_set_size_constraints:
             solver.add(size_constraint)
 
@@ -125,7 +126,6 @@ class SubsetCoverZ3Integer(SubsetCover):
                     if model.evaluate(mem.variable).as_long() > 0
                 ]))
             realized_choice_sets.append(choice_set)
-
         '''
         print(
             f"Chose {len(realized_choice_sets)} sets: {realized_choice_sets}")
@@ -143,4 +143,6 @@ if __name__ == "__main__":
                                        choice_set_size=k,
                                        hit_set_size=l,
                                        num_choice_sets=max_num_sets)
-        print_table(params, SubsetCoverZ3Integer().solve(params), header=(n == 8))
+        print_table(params,
+                    SubsetCoverZ3Integer().solve(params),
+                    header=(n == 8))
