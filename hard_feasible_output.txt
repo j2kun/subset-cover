@@ -1,0 +1,5 @@
+method,status,solve_time_seconds,num_elements,choice_set_size,hit_set_size,num_choice_sets
+SubsetCoverILP,SOLVED,0.0843,7,3,2,7
+SubsetCoverZ3Integer,SOLVED,0.0938,7,3,2,7
+SubsetCoverZ3BruteForce,SOLVED,0.0197,7,3,2,7
+SubsetCoverZ3Cardinality,SOLVED,0.0208,7,3,2,7

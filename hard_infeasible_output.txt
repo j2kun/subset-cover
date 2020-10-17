@@ -1,0 +1,5 @@
+method,status,solve_time_seconds,num_elements,choice_set_size,hit_set_size,num_choice_sets
+SubsetCoverILP,INFEASIBLE,120.8593,7,3,2,6
+SubsetCoverZ3Integer,INFEASIBLE,3.0792,7,3,2,6
+SubsetCoverZ3BruteForce,INFEASIBLE,0.3384,7,3,2,6
+SubsetCoverZ3Cardinality,INFEASIBLE,7.5781,7,3,2,6

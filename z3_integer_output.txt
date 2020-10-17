@@ -1,0 +1,9 @@
+num_elements,choice_set_size,hit_set_size,num_choice_sets,status,solve_time_seconds
+8,4,3,28,SolveStatus.SOLVED,2.1129
+9,4,3,42,SolveStatus.SOLVED,14.8728
+10,5,3,24,SolveStatus.SOLVED,7.6247
+11,5,3,33,SolveStatus.SOLVED,25.0607
+12,6,3,22,SolveStatus.SOLVED,30.5626
+13,6,3,28,SolveStatus.SOLVED,63.2780
+14,7,3,20,SolveStatus.SOLVED,57.0777
+15,7,3,26,SolveStatus.SOLVED,394.5060
